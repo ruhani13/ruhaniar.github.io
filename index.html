@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ruhani Arora — AI Research · ML Engineering · Data Science</title>
+<meta name="description" content="Ruhani Arora is an AI alignment researcher, ML engineer, and data scientist based in Singapore.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..600;1,9..144,300..600&family=Outfit:wght@300;400;500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --void:#070A16;          /* cosmic black       */
+    --midnight:#0C1126;      /* deep midnight blue */
+    --indigo:#1A2150;
+    --violet:#8B7FF0;
+    --violet-deep:#5A4FCF;
+    --emerald:#3ECFA0;
+    --gold:#EFC983;
+    --moon:#EDEFF9;
+    --faint:#9AA2C9;
+    --glass:rgba(20,26,58,.42);
+    --glass-edge:rgba(237,239,249,.09);
+    --ease:cubic-bezier(.19,.86,.24,1);
+    --dur:1.15s;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    background-color:var(--void);
+    background-image:
+      radial-gradient(110% 70% at 75% -8%, #141B44 0%, transparent 55%),
+      radial-gradient(90% 60% at -10% 40%, #101638 0%, transparent 60%),
+      linear-gradient(var(--midnight), var(--void) 70%);
+    background-attachment:fixed;
+    color:var(--moon);
+    font-family:'Outfit',system-ui,sans-serif;
+    font-weight:300;font-size:17.5px;line-height:1.7;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--gold);color:var(--void)}
+  a{color:var(--gold);text-decoration:none}
+  a:hover{text-decoration:underline}
+  a:focus-visible,button:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:3px}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 26px;position:relative;z-index:3}
+
+  /* ================= atmosphere layers ================= */
+  #sky{position:fixed;inset:0;z-index:0;pointer-events:none}
+  .nebula{position:fixed;z-index:0;pointer-events:none;border-radius:50%;filter:blur(100px);mix-blend-mode:screen;animation:breathe 18s ease-in-out infinite;will-change:transform,opacity}
+  @keyframes breathe{0%,100%{opacity:.30;transform:scale(1) translate(0,0)}50%{opacity:.5;transform:scale(1.08) translate(12px,-14px)}}
+  .neb-1{width:640px;height:520px;background:radial-gradient(ellipse,#4a3fbf,transparent 68%);top:-160px;right:-160px}
+  .neb-2{width:560px;height:480px;background:radial-gradient(ellipse,#173a6e,transparent 66%);top:52vh;left:-200px;animation-delay:-6s}
+  .neb-3{width:520px;height:460px;background:radial-gradient(ellipse,#1d6b57,transparent 66%);top:150vh;right:-160px;opacity:.24;animation-delay:-12s}
+  .neb-4{width:480px;height:420px;background:radial-gradient(ellipse,#5a3fbf,transparent 66%);top:260vh;left:-140px;opacity:.26;animation-delay:-3s}
+  /* volumetric ray, used once in hero */
+  .ray{position:absolute;top:-30%;left:8%;width:42vw;height:150%;z-index:1;pointer-events:none;
+    background:linear-gradient(115deg, transparent 30%, rgba(239,201,131,.05) 46%, rgba(139,127,240,.06) 54%, transparent 70%);
+    filter:blur(26px);transform:rotate(4deg)}
+  #vignette{position:fixed;inset:0;z-index:2;pointer-events:none;
+    background:radial-gradient(125% 100% at 50% 42%, transparent 52%, rgba(2,3,10,.6) 100%)}
+  #grain{position:fixed;inset:0;z-index:2;pointer-events:none;opacity:.045;mix-blend-mode:overlay;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+  body.aurora-pulse .nebula{animation-duration:5s;opacity:.65}
+
+  /* comet scroll progress */
+  #comet-track{position:fixed;top:0;right:14px;height:100vh;width:2px;z-index:6;pointer-events:none}
+  #comet-track .rail{position:absolute;inset:0;background:linear-gradient(rgba(154,162,201,.2),transparent);width:1px;left:6px}
+  #comet{position:absolute;left:0;top:0;width:13px;height:13px;border-radius:50%;background:var(--gold);
+    box-shadow:0 0 10px 2px rgba(239,201,131,.8),0 -26px 22px -6px rgba(239,201,131,.35);will-change:top}
+
+  /* ================= nav ================= */
+  header{position:fixed;top:0;left:0;right:0;z-index:10;opacity:0;animation:navin 1.4s var(--ease) .9s forwards;
+    background:rgba(7,10,22,.55);backdrop-filter:blur(14px) saturate(1.3);border-bottom:1px solid var(--glass-edge)}
+  @keyframes navin{to{opacity:1}}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:62px;max-width:1080px;margin:0 auto;padding:0 26px}
+  .wordmark{font-family:'Fraunces',serif;font-weight:500;font-size:1.08rem;color:var(--moon)}
+  .wordmark button{all:unset;cursor:pointer;color:var(--gold);display:inline-block;animation:twinkle 3.2s ease-in-out infinite;padding:0 2px}
+  @keyframes twinkle{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.8)}}
+  nav ul{display:flex;gap:26px;list-style:none}
+  nav a{font-family:'Space Mono',monospace;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);padding:6px 2px;
+    background:linear-gradient(var(--gold),var(--gold)) left bottom / 0% 1px no-repeat;
+    transition:color .35s var(--ease),background-size .4s var(--ease)}
+  nav a:hover{color:var(--moon);text-decoration:none;background-size:100% 1px}
+  nav a.active{color:var(--gold);background-size:100% 1px}
+
+  /* ================= shared type ================= */
+  .eyebrow{font-family:'Space Mono',monospace;font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:12px;margin-bottom:20px}
+  .eyebrow::before{content:"✦";animation:twinkle 3.6s ease-in-out infinite;font-size:.8rem}
+  h2.display{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(2.1rem,4.8vw,3.4rem);letter-spacing:-.012em;line-height:1.1}
+  .it{font-style:italic;color:var(--violet);font-weight:300}
+  .it.em{color:var(--emerald)}
+  .sec-head{margin-bottom:60px}
+  section{padding:130px 0;position:relative;scroll-margin-top:70px}
+  /* cosmic dust divider between sections */
+  section::before{content:"";position:absolute;top:0;left:50%;transform:translateX(-50%);width:min(520px,70vw);height:1px;
+    background:linear-gradient(90deg,transparent,rgba(239,201,131,.35),rgba(139,127,240,.35),transparent)}
+  .hero-sec::before{display:none}
+
+  /* reveals: rise + focus */
+  .reveal{opacity:0;transform:translateY(36px);filter:blur(8px);
+    transition:opacity var(--dur) var(--ease),transform var(--dur) var(--ease),filter var(--dur) var(--ease)}
+  .reveal.in{opacity:1;transform:none;filter:blur(0)}
+  .reveal.d1{transition-delay:.14s}.reveal.d2{transition-delay:.28s}.reveal.d3{transition-delay:.42s}
+
+  /* buttons: celestial artifacts */
+  .btn{display:inline-block;padding:14px 30px;border-radius:999px;position:relative;
+    font-family:'Space Mono',monospace;font-size:.76rem;letter-spacing:.06em;
+    border:1px solid rgba(239,201,131,.4);color:var(--moon);background:rgba(239,201,131,.05);
+    transition:all .35s var(--ease)}
+  .btn:hover{text-decoration:none;transform:translateY(-2px);color:var(--gold);border-color:var(--gold);
+    box-shadow:0 0 24px -4px rgba(239,201,131,.45),inset 0 0 18px -8px rgba(239,201,131,.5)}
+  .btn:active{transform:translateY(0) scale(.97);transition-duration:.12s}
+  .btn.primary{background:linear-gradient(140deg,rgba(239,201,131,.92),rgba(214,166,90,.92));color:var(--void);font-weight:700;border-color:transparent;
+    box-shadow:0 0 30px -6px rgba(239,201,131,.5);animation:artifact 4.5s ease-in-out infinite}
+  @keyframes artifact{0%,100%{box-shadow:0 0 26px -8px rgba(239,201,131,.45)}50%{box-shadow:0 0 42px -6px rgba(239,201,131,.7)}}
+  .btn.primary:hover{color:var(--void)}
+
+  /* glass cards */
+  .glass{background:var(--glass);border:1px solid var(--glass-edge);border-radius:22px;
+    backdrop-filter:blur(16px) saturate(1.25);box-shadow:0 30px 70px -30px rgba(0,0,10,.7)}
+
+  /* ================= 1 · hero ================= */
+  .hero-sec{min-height:100vh;display:flex;align-items:center;position:relative;padding:120px 0 80px;overflow:hidden}
+  .hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center;width:100%}
+  .hero-copy h1{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(3rem,7.6vw,5.6rem);line-height:1.04;letter-spacing:-.015em;margin-bottom:28px;
+    text-shadow:0 0 60px rgba(139,127,240,.25)}
+  .hero-copy .lede{font-size:1.14rem;color:var(--faint);max-width:44ch;margin-bottom:40px}
+  .hero-copy .lede b{color:var(--moon);font-weight:500}
+  .hero-ctas{display:flex;gap:16px;flex-wrap:wrap}
+  /* staged entrance */
+  .rise{opacity:0;transform:translateY(30px);animation:rise 1.5s var(--ease) forwards}
+  .rise.r2{animation-delay:.25s}.rise.r3{animation-delay:.5s}.rise.r4{animation-delay:.75s}
+  @keyframes rise{to{opacity:1;transform:none}}
+
+  /* the lone planet */
+  .planet-stage{position:relative;display:flex;align-items:center;justify-content:center;min-height:420px;will-change:transform}
+  .planet-aurora{position:absolute;width:130%;aspect-ratio:1;border-radius:50%;filter:blur(70px);opacity:.55;mix-blend-mode:screen;
+    background:conic-gradient(from 210deg, transparent 0 18%, rgba(62,207,160,.28) 30%, transparent 46%, rgba(139,127,240,.32) 62%, transparent 78%, rgba(239,201,131,.16) 88%, transparent 100%);
+    animation:auroraturn 46s linear infinite}
+  @keyframes auroraturn{to{transform:rotate(360deg)}}
+  .planet{position:relative;width:min(38vw,400px);aspect-ratio:1;border-radius:50%;overflow:hidden;
+    background:radial-gradient(circle at 33% 28%, #9AA8FF 0%, #5A4FCF 32%, #232B6E 62%, #0A0D22 96%);
+    box-shadow:
+      inset -34px -30px 90px rgba(2,3,12,.85),
+      inset 14px 12px 40px rgba(200,210,255,.18),
+      0 0 90px rgba(139,127,240,.35),
+      0 0 220px rgba(62,207,160,.10);
+    animation:hover-float 11s ease-in-out infinite}
+  @keyframes hover-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-16px)}}
+  .planet .bands{position:absolute;inset:-25%;animation:surface 90s linear infinite;background:
+    radial-gradient(ellipse 42% 9% at 32% 38%, rgba(255,255,255,.15), transparent 65%),
+    radial-gradient(ellipse 55% 11% at 62% 58%, rgba(62,207,160,.20), transparent 65%),
+    radial-gradient(ellipse 48% 8% at 46% 72%, rgba(239,201,131,.13), transparent 65%),
+    radial-gradient(ellipse 38% 7% at 58% 26%, rgba(200,190,255,.14), transparent 65%)}
+  @keyframes surface{to{transform:rotate(360deg)}}
+  .planet .terminator{position:absolute;inset:0;border-radius:50%;
+    background:radial-gradient(circle at 100% 85%, rgba(3,4,14,.92) 22%, transparent 60%)}
+  .planet-halo{position:absolute;width:min(38vw,400px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+    box-shadow:0 0 0 1px rgba(200,210,255,.07);filter:blur(.4px)}
+  .moonlet{position:absolute;width:26px;height:26px;border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #F4E7C8, #B99B5E 70%);
+    box-shadow:0 0 14px rgba(239,201,131,.6);top:12%;right:6%;animation:moonorbit 26s linear infinite;transform-origin:-160px 190px}
+  @keyframes moonorbit{to{transform:rotate(360deg)}}
+  .scroll-hint{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;color:var(--faint);display:flex;flex-direction:column;align-items:center;gap:10px;z-index:3;transition:opacity .7s var(--ease),transform .7s var(--ease)}
+  .scroll-hint::after{content:"";width:1px;height:46px;background:linear-gradient(var(--gold),transparent);animation:driftline 2.4s ease-in-out infinite}
+  @keyframes driftline{0%,100%{opacity:.3}50%{opacity:1}}
+  body.scrolled .scroll-hint{opacity:0;transform:translateX(-50%) translateY(14px)}
+
+  /* ================= 2 · research: planet showcase ================= */
+  .research-lede{max-width:62ch;color:var(--faint);font-size:1.12rem;margin-bottom:14px}
+  .research-lede b{color:var(--moon);font-weight:500}
+  .worlds{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:56px;perspective:1100px}
+  .world{padding:34px 28px 30px;position:relative;transform-style:preserve-3d;will-change:transform;
+    transition:border-color .45s var(--ease),box-shadow .45s var(--ease)}
+  .world:hover{border-color:rgba(239,201,131,.4);box-shadow:0 34px 80px -30px rgba(90,79,207,.6)}
+  .world .orb{width:86px;height:86px;border-radius:50%;margin-bottom:22px;position:relative;animation:hover-float 9s ease-in-out infinite}
+  .world:nth-child(2) .orb{animation-delay:-3s}
+  .world:nth-child(3) .orb{animation-delay:-6s}
+  .orb.violet{background:radial-gradient(circle at 34% 28%, #BDB2FF, #5A4FCF 55%, #171B4A 95%);box-shadow:inset -10px -9px 26px rgba(2,3,12,.8),0 0 34px rgba(139,127,240,.5)}
+  .orb.gold{background:radial-gradient(circle at 34% 28%, #FBE7BD, #D6A65A 55%, #4E3714 95%);box-shadow:inset -10px -9px 26px rgba(20,10,0,.75),0 0 34px rgba(239,201,131,.5)}
+  .orb.emerald{background:radial-gradient(circle at 34% 28%, #B4F2DD, #2FA981 55%, #0D3A2C 95%);box-shadow:inset -10px -9px 26px rgba(0,10,6,.8),0 0 34px rgba(62,207,160,.45)}
+  .orb .ring{position:absolute;inset:-16% -26%;border-radius:50%;border:1px solid rgba(239,201,131,.4);transform:rotateX(72deg)}
+  .world h3{font-family:'Fraunces',serif;font-weight:500;font-size:1.28rem;margin-bottom:10px}
+  .world p{color:var(--faint);font-size:.96rem}
+  .study{margin-top:56px;padding:38px 38px 32px;position:relative;overflow:hidden}
+  .study::after{content:"";position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(239,201,131,.7),transparent)}
+  .study .tag{font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:16px}
+  .study h3{font-family:'Fraunces',serif;font-weight:400;font-size:1.6rem;line-height:1.32;margin-bottom:16px}
+  .study p{color:var(--faint);max-width:66ch;margin-bottom:14px}
+  .study .meta{display:flex;gap:26px;flex-wrap:wrap;margin-top:22px;padding-top:20px;border-top:1px solid var(--glass-edge)}
+  .study .meta div{font-family:'Space Mono',monospace;font-size:.7rem;color:var(--faint)}
+  .study .meta b{display:block;color:var(--moon);font-weight:700;margin-bottom:2px}
+
+  /* ================= 3 · experience: constellation timeline ================= */
+  .constellation{position:relative;padding-left:64px}
+  .constellation svg.thread{position:absolute;left:0;top:0;height:100%;width:48px;overflow:visible}
+  .constellation .threadline{fill:none;stroke:url(#threadgrad);stroke-width:1.6;stroke-linecap:round}
+  .constellation .node{position:absolute;left:-64px;top:6px;width:48px;display:flex;justify-content:center}
+  .constellation .node i{font-style:normal;color:var(--gold);font-size:1rem;opacity:.25;transition:opacity .8s var(--ease),text-shadow .8s var(--ease)}
+  .xp{position:relative;padding:0 0 72px}
+  .xp:last-child{padding-bottom:6px}
+  .xp.lit .node i{opacity:1;text-shadow:0 0 16px rgba(239,201,131,.9)}
+  .xp .card{padding:32px 32px 28px}
+  .xp .when{font-family:'Space Mono',monospace;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-bottom:10px}
+  .xp h3{font-family:'Fraunces',serif;font-weight:500;font-size:1.42rem;margin-bottom:4px}
+  .xp .org{color:var(--violet);margin-bottom:12px}
+  .xp p{color:var(--faint);max-width:64ch;margin-bottom:8px;font-size:.98rem}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+  .chip{font-family:'Space Mono',monospace;font-size:.64rem;letter-spacing:.05em;border:1px solid var(--glass-edge);color:var(--faint);border-radius:999px;padding:4px 12px;background:rgba(237,239,249,.03)}
+
+  /* ================= 4 · education: glowing orbs ================= */
+  .edu-grid{display:grid;grid-template-columns:1fr 1fr;gap:26px;perspective:1100px}
+  .edu{padding:36px 32px;transform-style:preserve-3d;will-change:transform;position:relative;
+    transition:border-color .45s var(--ease),box-shadow .45s var(--ease)}
+  .edu:hover{border-color:rgba(139,127,240,.45);box-shadow:0 34px 80px -30px rgba(90,79,207,.55)}
+  .edu .phase{font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:10px}
+  .edu .lantern{width:15px;height:15px;border-radius:50%;display:inline-block;background:radial-gradient(circle at 35% 30%, #FBEECB, var(--gold) 60%);box-shadow:0 0 12px rgba(239,201,131,.8);animation:lanternglow 3.6s ease-in-out infinite}
+  .edu:nth-child(2) .lantern{animation-delay:-1.8s}
+  @keyframes lanternglow{0%,100%{box-shadow:0 0 10px rgba(239,201,131,.55)}50%{box-shadow:0 0 20px rgba(239,201,131,.95)}}
+  .edu h3{font-family:'Fraunces',serif;font-weight:500;font-size:1.32rem;line-height:1.32;margin-bottom:6px}
+  .edu .school{color:var(--violet);margin-bottom:12px}
+  .edu p{color:var(--faint);font-size:.95rem}
+
+  /* ================= 5 · about: storytelling journey ================= */
+  .chapter{display:grid;grid-template-columns:90px 1fr;gap:30px;padding:44px 0;border-bottom:1px solid var(--glass-edge)}
+  .chapter:last-of-type{border-bottom:none}
+  .chapter .num{font-family:'Fraunces',serif;font-style:italic;font-size:2rem;color:rgba(239,201,131,.55);line-height:1.2}
+  .chapter h3{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(1.5rem,3vw,2.1rem);line-height:1.25;margin-bottom:14px}
+  .chapter p{color:var(--faint);max-width:60ch}
+  .chapter p b{color:var(--moon);font-weight:500}
+  .fieldnotes{margin-top:52px;padding:32px 30px}
+  .fieldnotes .t{font-family:'Space Mono',monospace;font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);margin-bottom:18px}
+  .fieldnotes ul{list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:14px 30px}
+  .fieldnotes li{color:var(--faint);font-size:.95rem;padding-left:22px;position:relative}
+  .fieldnotes li::before{content:"✦";position:absolute;left:0;color:var(--violet);font-size:.7rem;top:4px}
+
+  /* ================= 6 · contact: beneath a rotating galaxy ================= */
+  .contact{padding:180px 0 150px;text-align:center;overflow:hidden}
+  .galaxy{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:min(1100px,150vw);aspect-ratio:1;border-radius:50%;pointer-events:none;z-index:0;
+    background:
+      conic-gradient(from 0deg, transparent 0 16%, rgba(139,127,240,.14) 24%, transparent 36%,
+        transparent 50%, rgba(239,201,131,.10) 60%, transparent 70%,
+        transparent 82%, rgba(62,207,160,.08) 90%, transparent 100%);
+    filter:blur(22px);animation:galaxyturn 110s linear infinite;opacity:.9}
+  @keyframes galaxyturn{to{transform:translate(-50%,-50%) rotate(360deg)}}
+  .galaxy-core{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:220px;height:220px;border-radius:50%;pointer-events:none;z-index:0;
+    background:radial-gradient(circle,rgba(239,201,131,.16),transparent 70%);filter:blur(10px)}
+  .contact h2{font-family:'Fraunces',serif;font-weight:400;font-size:clamp(2.5rem,6.4vw,4.6rem);line-height:1.08;letter-spacing:-.015em;max-width:19ch;margin:0 auto 24px;position:relative;z-index:3}
+  .contact p{color:var(--faint);max-width:46ch;margin:0 auto 44px;position:relative;z-index:3}
+  .contact-links{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;position:relative;z-index:3}
+
+  footer{border-top:1px solid var(--glass-edge);padding:30px 0;position:relative;z-index:3}
+  footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:10px;font-family:'Space Mono',monospace;font-size:.68rem;color:var(--faint)}
+  #stardust-secret{cursor:pointer;user-select:none}
+  #stardust-secret:hover{color:var(--gold)}
+
+  /* ================= reduced motion & responsive ================= */
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    *,*::before,*::after{animation:none!important}
+    .reveal,.rise{opacity:1;transform:none;filter:none;transition:none}
+    .world,.edu,.planet-stage{transform:none!important}
+  }
+  @media (max-width: 940px){
+    .hero-grid{grid-template-columns:1fr;gap:56px}
+    .planet-stage{min-height:320px;order:-1}
+    .planet{width:min(58vw,300px)}
+    .planet-halo{width:min(58vw,300px)}
+    .worlds{grid-template-columns:1fr}
+    .edu-grid{grid-template-columns:1fr}
+    .fieldnotes ul{grid-template-columns:1fr}
+    .chapter{grid-template-columns:1fr;gap:8px}
+    .constellation{padding-left:44px}
+    .constellation .node{left:-44px}
+    nav ul{gap:14px}
+    nav a{font-size:.6rem}
+    section{padding:96px 0}
+    #comet-track{display:none}
+    .ray{display:none}
+  }
+</style>
+</head>
+<body>
+
+<canvas id="sky" aria-hidden="true"></canvas>
+<div class="nebula neb-1" aria-hidden="true"></div>
+<div class="nebula neb-2" aria-hidden="true"></div>
+<div class="nebula neb-3" aria-hidden="true"></div>
+<div class="nebula neb-4" aria-hidden="true"></div>
+<div id="vignette" aria-hidden="true"></div>
+<div id="grain" aria-hidden="true"></div>
+<div id="comet-track" aria-hidden="true"><div class="rail"></div><div id="comet"></div></div>
+
+<header>
+  <div class="nav">
+    <div class="wordmark">Ruhani Arora <button id="egg-star" aria-label="A small star. It might do something.">✦</button></div>
+    <nav aria-label="Main">
+      <ul>
+        <li><a href="#research">Research</a></li>
+        <li><a href="#experience">Experience</a></li>
+        <li><a href="#education">Education</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <!-- ============ 1 · HERO ============ -->
+  <div class="hero-sec" id="top">
+    <div class="ray" aria-hidden="true"></div>
+    <div class="wrap hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow rise">AI Research · ML Engineering · Data Science — Singapore</p>
+        <h1 class="rise r2">Charting how machines <span class="it">reason.</span></h1>
+        <p class="lede rise r3">I'm <b>Ruhani Arora</b> — an AI alignment researcher and ML engineer studying whether we can trust what models say they're thinking, one reasoning trace at a time.</p>
+        <div class="hero-ctas rise r4">
+          <a class="btn primary" href="#research">Begin the journey</a>
+          <a class="btn" href="#contact">Send a signal</a>
+        </div>
+      </div>
+      <div class="planet-stage rise r3" aria-hidden="true">
+        <div class="planet-aurora"></div>
+        <div class="planet">
+          <div class="bands"></div>
+          <div class="terminator"></div>
+        </div>
+        <div class="planet-halo"></div>
+        <div class="moonlet"></div>
+      </div>
+    </div>
+    <div class="scroll-hint">Drift down</div>
+  </div>
+
+  <!-- ============ 2 · RESEARCH — planet showcase ============ -->
+  <section id="research">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="eyebrow">Research</p>
+        <h2 class="display">Three worlds I <span class="it">orbit</span></h2>
+      </div>
+      <p class="research-lede reveal">My work sits where <b>AI alignment</b>, <b>mechanistic interpretability</b>, and <b>philosophy</b> meet: what does it mean for a model's stated reasoning to be faithful — and how would we measure it if it weren't?</p>
+
+      <div class="worlds">
+        <div class="world glass reveal d1">
+          <div class="orb violet"><div class="ring"></div></div>
+          <h3>AI Alignment</h3>
+          <p>Making advanced systems honest and monitorable — currently through the lens of reward hacking, and whether chain-of-thought gives monitors real signal.</p>
+        </div>
+        <div class="world glass reveal d2">
+          <div class="orb gold"></div>
+          <h3>Mechanistic Interpretability</h3>
+          <p>Looking beneath the outputs: understanding the internal circuits and representations that produce a model's behavior, not just describing it.</p>
+        </div>
+        <div class="world glass reveal d3">
+          <div class="orb emerald"></div>
+          <h3>Philosophy</h3>
+          <p>The conceptual foundations underneath the math — what "preferences," "values," and "honesty" actually mean when we ask machines to have them.</p>
+        </div>
+      </div>
+
+      <div class="study glass reveal">
+        <div class="tag">✦ Ongoing · NeurIPS workshop submission in progress</div>
+        <h3>Does chain-of-thought genuinely help us catch reward hacking?</h3>
+        <p>Behavioral monitors already perform strongly. The open question: does reading a model's <em>reasoning</em> add real detection power over watching its <em>actions</em> alone — and when does that margin appear or vanish?</p>
+        <p>Through the Algoverse AI Fellowship, I'm investigating this with a mixed-effects logistic regression framework on reasoning-trace datasets (MALT, TRACE), designed to give the question the statistical power it deserves.</p>
+        <div class="meta">
+          <div><b>Status</b>In progress</div>
+          <div><b>Datasets</b>MALT · TRACE</div>
+          <div><b>Method</b>Mixed-effects logistic regression</div>
+          <div><b>Fellowship</b>Algoverse AI</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 3 · EXPERIENCE — constellation timeline ============ -->
+  <section id="experience">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="eyebrow">Experience</p>
+        <h2 class="display">A constellation, <span class="it">drawn so far</span></h2>
+      </div>
+
+      <div class="constellation" id="constellation">
+        <svg class="thread" aria-hidden="true" preserveAspectRatio="none">
+          <defs>
+            <linearGradient id="threadgrad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#EFC983"/>
+              <stop offset=".55" stop-color="#8B7FF0"/>
+              <stop offset="1" stop-color="#3ECFA0"/>
+            </linearGradient>
+          </defs>
+          <path class="threadline" id="threadline" d=""/>
+        </svg>
+
+        <div class="xp">
+          <div class="node"><i>✦</i></div>
+          <div class="card glass reveal">
+            <div class="when">May 2026 — Present</div>
+            <h3>AI Alignment Researcher</h3>
+            <div class="org">Algoverse AI Fellowship</div>
+            <p>Mentored research fellowship culminating in a NeurIPS workshop submission (in progress). Investigating when a model's chain-of-thought provides genuine marginal value for detecting reward hacking versus behavioral monitoring alone.</p>
+            <div class="chips">
+              <span class="chip">AI Safety</span><span class="chip">CoT Monitoring</span><span class="chip">Statistical Modeling</span><span class="chip">Python</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="xp">
+          <div class="node"><i>✦</i></div>
+          <div class="card glass reveal">
+            <div class="when">Jun 2023 — Apr 2026</div>
+            <h3>Data Scientist II</h3>
+            <div class="org">Charter Communications (Spectrum) · Madison, WI</div>
+            <p>Designed a multi-class CNN in PyTorch to classify impairment patterns in RXMER signal data, reducing customer downtime by over 20%. Uncovered novel impairment patterns with unsupervised clustering (K-Means, DBSCAN), enabling new preventative maintenance workflows.</p>
+            <p>Engineered petabyte-scale ETL pipelines in Scala and Apache Spark (40% latency improvement), productionized models via AWS S3, Lambda, and Batch, and built a real-time Apache Superset dashboard that cut report turnaround from a day to seconds.</p>
+            <div class="chips">
+              <span class="chip">PyTorch</span><span class="chip">Spark / Scala</span><span class="chip">AWS</span><span class="chip">Superset</span><span class="chip">SQL</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 4 · EDUCATION — glowing lanterns ============ -->
+  <section id="education">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="eyebrow">Education</p>
+        <h2 class="display">Two hemispheres of <span class="it em">study</span></h2>
+      </div>
+      <div class="edu-grid">
+        <div class="edu glass reveal d1">
+          <div class="phase"><span class="lantern"></span>Incoming · AY 2026/27</div>
+          <h3>MSc, Data Science &amp; Machine Learning</h3>
+          <div class="school">National University of Singapore</div>
+          <p>Graduate study in statistical machine learning — the next chapter, beginning in Singapore.</p>
+        </div>
+        <div class="edu glass reveal d2">
+          <div class="phase"><span class="lantern"></span>Completed</div>
+          <h3>BS, Data Science, Information Science &amp; Computer Science</h3>
+          <div class="school">University of Wisconsin–Madison</div>
+          <p>Triple major, GPA 3.85/4.0 — a foundation spanning statistics, computing, and how people actually use information.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 5 · ABOUT — a journey in three chapters ============ -->
+  <section id="about">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <p class="eyebrow">About</p>
+        <h2 class="display">A journey in <span class="it">three chapters</span></h2>
+      </div>
+
+      <div class="chapter reveal">
+        <div class="num">I.</div>
+        <div>
+          <h3>It began with signals.</h3>
+          <p>Three years as a data scientist at Spectrum, building deep learning systems over <b>petabyte-scale network data</b> — CNNs that caught faults before customers felt them, pipelines that moved oceans of telemetry.</p>
+        </div>
+      </div>
+
+      <div class="chapter reveal">
+        <div class="num">II.</div>
+        <div>
+          <h3>Then, a harder question.</h3>
+          <p>Somewhere between the pipelines and the models, I became more interested in <b>whether we can trust how a model got its answer</b> — not just what it predicts. Kahneman taught us that humans confabulate reasons for their choices all the time. Why would we assume machines don't?</p>
+        </div>
+      </div>
+
+      <div class="chapter reveal">
+        <div class="num">III.</div>
+        <div>
+          <h3>Now, charting reasoning itself.</h3>
+          <p>AI alignment research: asking whether a model's chain-of-thought is a window into its reasoning or just a plausible story — and answering with <b>real statistical rigor, not vibes</b>. The next chapter unfolds in Singapore, at NUS.</p>
+        </div>
+      </div>
+
+      <div class="fieldnotes glass reveal">
+        <div class="t">✦ Field notes</div>
+        <ul>
+          <li>Based in Singapore, incoming MSc at NUS</li>
+          <li>Reading: philosophy of mind &amp; behavioral economics</li>
+          <li>Favorite question: "how would we know if we were wrong?"</li>
+          <li>Builds with Python, PyTorch, R, SQL, Scala, Spark, AWS</li>
+          <li>Previously: 3 years in industry ML at Spectrum</li>
+          <li>Somewhere on this page, two small secrets are hidden</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ 6 · CONTACT — beneath a rotating galaxy ============ -->
+  <section id="contact" class="contact">
+    <div class="galaxy" aria-hidden="true"></div>
+    <div class="galaxy-core" aria-hidden="true"></div>
+    <div class="wrap">
+      <div class="reveal">
+        <h2>Send a signal across <span class="it">the void.</span></h2>
+        <p>Working on alignment, interpretability, or just want to argue about whether models really "reason"? My inbox is open.</p>
+        <div class="contact-links">
+          <a class="btn primary" href="mailto:ruhaniarora2k@gmail.com">ruhaniarora2k@gmail.com</a>
+          <a class="btn" href="https://www.linkedin.com/in/ruhaniar/" rel="noopener">LinkedIn ↗</a>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© 2026 Ruhani Arora</span>
+    <span id="stardust-secret" title="✦">Singapore ✦ made of starlight &amp; statistics</span>
+  </div>
+</footer>
+
+<script>
+(function(){
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const lerp = (a,b,k)=>a+(b-a)*k;
+  const rand = (a,b)=>a+Math.random()*(b-a);
+
+  /* ============================================================
+     ONE canvas, one loop: stars, dust, fireflies, lanterns,
+     meteors, cursor trail, stardust bursts, light-butterflies
+     ============================================================ */
+  const canvas = document.getElementById('sky');
+  const ctx = canvas.getContext('2d');
+  let W, H, stars = [], motes = [], flies = [], lanterns = [];
+  const meteors = [], trail = [], bursts = [];
+  let butterfly = null, nextButterfly = 14;
+
+  function resize(){
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+    build();
+  }
+
+  function build(){
+    stars = []; motes = []; flies = []; lanterns = [];
+    const n = Math.min(300, Math.floor(W*H/6000));
+    for (let i=0;i<n;i++){
+      const layer = Math.random();
+      stars.push({x:rand(0,W), y:rand(0,H*3), r:.4+layer*1.4, layer:.15+layer*.55,
+        phase:rand(0,Math.PI*2), speed:rand(.35,1.4), tint:Math.random()<.12?'#EFC983':(Math.random()<.07?'#8FE7C8':'#EDEFF9')});
+    }
+    for (let i=0;i<40;i++) motes.push({x:rand(0,W),y:rand(0,H),vx:rand(-.08,.08),vy:rand(-.05,.05),r:rand(.5,1.1),a:rand(.04,.12)});
+    for (let i=0;i<12;i++) flies.push({x:rand(0,W),y:rand(0,H),t:rand(0,100),sp:rand(.12,.3),amp:rand(16,42),r:rand(1.1,2),gold:Math.random()<.6});
+    for (let i=0;i<4;i++) lanterns.push({x:rand(.1,.9)*W,y:rand(0,H)+H,vy:rand(.12,.24),r:rand(4,7),sway:rand(0,Math.PI*2)});
+  }
+
+  /* pointer, damped */
+  let px=0,py=0,tx=0,ty=0,lastTX=0,lastTY=0,pointerReal=false;
+  window.addEventListener('pointermove',(e)=>{
+    tx=(e.clientX/W)*2-1; ty=(e.clientY/H)*2-1; pointerReal=true;
+    /* magical cursor trail — spawn on real movement, throttled by distance */
+    if (!reduceMotion){
+      const dx=e.clientX-lastTX, dy=e.clientY-lastTY;
+      if (dx*dx+dy*dy>240){
+        lastTX=e.clientX; lastTY=e.clientY;
+        trail.push({x:e.clientX+rand(-3,3), y:e.clientY+rand(-3,3),
+          vx:rand(-.2,.2), vy:rand(-.5,-.15), life:1, r:rand(.8,1.9),
+          c:Math.random()<.6?'239,201,131':'139,127,240'});
+        if (trail.length>90) trail.shift();
+      }
+    }
+  },{passive:true});
+
+  let scrollY=0;
+  window.addEventListener('scroll',()=>{scrollY=window.scrollY;},{passive:true});
+
+  function spawnMeteor(x,y){
+    meteors.push({x:x??rand(W*.1,W*.9), y:y??rand(0,H*.35),
+      vx:-rand(5,10), vy:rand(2.5,5), life:1});
+  }
+  function stardust(x,y,n,emerald){
+    for(let i=0;i<n;i++) bursts.push({x:x+rand(-6,6),y:y+rand(-4,4),
+      vx:rand(-1.1,1.1),vy:rand(-1.4,-.2),life:1,r:rand(.7,1.8),
+      c:emerald?'62,207,160':(Math.random()<.7?'239,201,131':'237,239,249')});
+  }
+  function spawnButterfly(){
+    const fromLeft = Math.random()<.5;
+    butterfly = {x:fromLeft?-30:W+30, dir:fromLeft?1:-1, baseY:rand(H*.2,H*.65), t:0,
+      hue:Math.random()<.5?'239,201,131':'139,127,240'};
+  }
+
+  let t=0, last=performance.now();
+  function draw(now){
+    const dt = Math.min(.05,(now-last)/1000); last=now;
+    t += dt;
+    ctx.clearRect(0,0,W,H);
+    px=lerp(px,tx,.04); py=lerp(py,ty,.04);
+
+    /* dust motes — deepest layer */
+    for (const m of motes){
+      m.x+=m.vx; m.y+=m.vy;
+      if(m.x<0)m.x=W; if(m.x>W)m.x=0; if(m.y<0)m.y=H; if(m.y>H)m.y=0;
+      ctx.globalAlpha=m.a; ctx.fillStyle='#B9C2E8';
+      ctx.beginPath(); ctx.arc(m.x,m.y,m.r,0,7); ctx.fill();
+    }
+
+    /* stars — scroll + pointer parallax by depth */
+    for (const s of stars){
+      let y=(s.y-scrollY*s.layer)%(H*3); if(y<0)y+=H*3;
+      if(y>H+10)continue;
+      const tw=reduceMotion?1:(.55+.45*Math.sin(t*s.speed+s.phase));
+      ctx.globalAlpha=tw*(.3+s.layer*.7);
+      ctx.fillStyle=s.tint;
+      ctx.beginPath(); ctx.arc(s.x+px*s.layer*26, y+py*s.layer*14, s.r,0,7); ctx.fill();
+    }
+
+    if(!reduceMotion){
+      /* floating lantern stars — rise slowly, sway, respawn below */
+      for (const l of lanterns){
+        l.y-=l.vy; l.sway+=dt*.6;
+        const lx=l.x+Math.sin(l.sway)*14;
+        if(l.y<-20){l.y=H+rand(20,160); l.x=rand(.1,.9)*W;}
+        const g=ctx.createRadialGradient(lx,l.y,0,lx,l.y,l.r*3.2);
+        g.addColorStop(0,'rgba(251,238,203,.85)');
+        g.addColorStop(.4,'rgba(239,201,131,.35)');
+        g.addColorStop(1,'rgba(239,201,131,0)');
+        ctx.globalAlpha=1; ctx.fillStyle=g;
+        ctx.beginPath(); ctx.arc(lx,l.y,l.r*3.2,0,7); ctx.fill();
+      }
+
+      /* fireflies — wandering pinpricks */
+      for (const f of flies){
+        f.t+=dt;
+        const fx=f.x+Math.sin(f.t*f.sp*2)*f.amp;
+        const fy=f.y+Math.cos(f.t*f.sp*1.4)*f.amp*.6;
+        const glow=.35+.65*Math.abs(Math.sin(f.t*1.7));
+        ctx.globalAlpha=glow*.8;
+        ctx.fillStyle=f.gold?'#F6DFAE':'#BFE9DB';
+        ctx.beginPath(); ctx.arc(fx,fy,f.r,0,7); ctx.fill();
+      }
+
+      /* occasional shooting stars */
+      if (Math.random()<dt*.14) spawnMeteor();
+      for (let i=meteors.length-1;i>=0;i--){
+        const m=meteors[i]; m.x+=m.vx; m.y+=m.vy; m.life-=.016;
+        if(m.life<=0){meteors.splice(i,1);continue;}
+        const g=ctx.createLinearGradient(m.x,m.y,m.x-m.vx*9,m.y-m.vy*9);
+        g.addColorStop(0,'rgba(239,201,131,'+(m.life*.95)+')');
+        g.addColorStop(1,'rgba(239,201,131,0)');
+        ctx.globalAlpha=1; ctx.strokeStyle=g; ctx.lineWidth=1.5;
+        ctx.beginPath(); ctx.moveTo(m.x,m.y); ctx.lineTo(m.x-m.vx*9,m.y-m.vy*9); ctx.stroke();
+      }
+
+      /* a butterfly made of light, now and then */
+      nextButterfly-=dt;
+      if(!butterfly && nextButterfly<=0){spawnButterfly(); nextButterfly=rand(22,40);}
+      if(butterfly){
+        const b=butterfly; b.t+=dt; b.x+=b.dir*(60*dt);
+        const bx=b.x, by=b.baseY+Math.sin(b.t*1.6)*34;
+        const flap=Math.abs(Math.sin(b.t*9));
+        ctx.globalAlpha=.85;
+        ctx.fillStyle='rgba('+b.hue+',.8)';
+        for(const side of [-1,1]){
+          ctx.save(); ctx.translate(bx,by);
+          ctx.scale(side*(0.35+flap*.75),1);
+          ctx.beginPath(); ctx.ellipse(5,-2,6,3.4,-.5,0,7); ctx.fill();
+          ctx.beginPath(); ctx.ellipse(4.4,2.6,4.6,2.6,.5,0,7); ctx.fill();
+          ctx.restore();
+        }
+        ctx.fillStyle='rgba(237,239,249,.9)';
+        ctx.beginPath(); ctx.ellipse(bx,by,1,3,0,0,7); ctx.fill();
+        if(b.x<-60||b.x>W+60) butterfly=null;
+      }
+
+      /* cursor trail */
+      for(let i=trail.length-1;i>=0;i--){
+        const p=trail[i]; p.x+=p.vx; p.y+=p.vy; p.life-=.022;
+        if(p.life<=0){trail.splice(i,1);continue;}
+        ctx.globalAlpha=p.life*.7;
+        ctx.fillStyle='rgba('+p.c+',1)';
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,7); ctx.fill();
+      }
+
+      /* stardust bursts (buttons, easter eggs) */
+      for(let i=bursts.length-1;i>=0;i--){
+        const p=bursts[i]; p.x+=p.vx; p.y+=p.vy; p.vy+=.012; p.life-=.02;
+        if(p.life<=0){bursts.splice(i,1);continue;}
+        ctx.globalAlpha=p.life*.85;
+        ctx.fillStyle='rgba('+p.c+',1)';
+        ctx.beginPath(); ctx.arc(p.x,p.y,p.r*p.life,0,7); ctx.fill();
+      }
+    }
+
+    ctx.globalAlpha=1;
+    requestAnimationFrame(draw);
+  }
+  window.addEventListener('resize',resize);
+  resize();
+  requestAnimationFrame(draw);
+
+  /* click empty space → a shooting star of your own */
+  document.addEventListener('click',(e)=>{
+    if(reduceMotion) return;
+    if(e.target.closest('a,button,nav,input')) return;
+    spawnMeteor(e.clientX,e.clientY);
+  });
+
+  /* buttons emit stardust on hover */
+  if(!reduceMotion) document.querySelectorAll('.btn').forEach(b=>{
+    b.addEventListener('pointerenter',()=>{
+      const r=b.getBoundingClientRect();
+      stardust(r.left+rand(0,r.width), r.top+rand(0,r.height), 12);
+    });
+  });
+
+  /* ---- easter egg 1: the wordmark star showers meteors ---- */
+  document.getElementById('egg-star').addEventListener('click',()=>{
+    if(reduceMotion) return;
+    for(let i=0;i<9;i++) setTimeout(()=>spawnMeteor(),i*130);
+  });
+  /* ---- easter egg 2: footer line breathes the aurora + emerald dust ---- */
+  document.getElementById('stardust-secret').addEventListener('click',(e)=>{
+    if(reduceMotion) return;
+    stardust(e.clientX,e.clientY,26,true);
+    document.body.classList.add('aurora-pulse');
+    setTimeout(()=>document.body.classList.remove('aurora-pulse'),4500);
+  });
+
+  /* ============ comet progress, lerped ============ */
+  const comet=document.getElementById('comet');
+  let cometP=0;
+  (function cometLoop(){
+    const max=document.documentElement.scrollHeight-window.innerHeight;
+    const p=max>0?window.scrollY/max:0;
+    cometP=reduceMotion?p:lerp(cometP,p,.09);
+    comet.style.top='calc('+(cometP*100)+'% - '+(cometP*13)+'px)';
+    requestAnimationFrame(cometLoop);
+  })();
+
+  /* ============ hero: slow camera drift + planet tilt ============ */
+  const heroCopy=document.querySelector('.hero-copy');
+  const planetStage=document.querySelector('.planet-stage');
+  (function heroLoop(){
+    if(!reduceMotion){
+      const sy=window.scrollY;
+      if(sy<window.innerHeight){
+        if(heroCopy){
+          heroCopy.style.transform='translateY('+(sy*.2)+'px)';
+          heroCopy.style.opacity=Math.max(0,1-sy/(window.innerHeight*.85));
+        }
+        if(planetStage){
+          planetStage.style.transform=
+            'translateY('+(sy*.1)+'px) rotateY('+(px*7)+'deg) rotateX('+(-py*6)+'deg)';
+        }
+      }
+    }
+    document.body.classList.toggle('scrolled',window.scrollY>60);
+    requestAnimationFrame(heroLoop);
+  })();
+
+  /* ============ card tilt (hover devices only) ============ */
+  if(!reduceMotion && matchMedia('(hover:hover)').matches){
+    document.querySelectorAll('.world,.edu').forEach(card=>{
+      let raf=null;
+      card.addEventListener('pointermove',(e)=>{
+        if(raf)return;
+        raf=requestAnimationFrame(()=>{
+          const r=card.getBoundingClientRect();
+          const cx=(e.clientX-r.left)/r.width-.5, cy=(e.clientY-r.top)/r.height-.5;
+          card.style.transform='rotateY('+(cx*6)+'deg) rotateX('+(-cy*6)+'deg) translateY(-4px)';
+          raf=null;
+        });
+      });
+      card.addEventListener('pointerleave',()=>{
+        card.style.transition='transform .8s var(--ease), border-color .45s var(--ease), box-shadow .45s var(--ease)';
+        card.style.transform='';
+        setTimeout(()=>{card.style.transition='';},800);
+      });
+    });
+  }
+
+  /* ============ reveals ============ */
+  const io=new IntersectionObserver((entries)=>{
+    for(const en of entries){
+      if(en.isIntersecting){en.target.classList.add('in');io.unobserve(en.target);}
+    }
+  },{threshold:.08,rootMargin:'0px 0px -8% 0px'});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+  /* ============ scrollspy ============ */
+  const links=document.querySelectorAll('nav a');
+  const sections=[...links].map(a=>document.querySelector(a.getAttribute('href')));
+  const spy=new IntersectionObserver((entries)=>{
+    for(const en of entries){
+      if(en.isIntersecting){
+        links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+en.target.id));
+      }
+    }
+  },{rootMargin:'-45% 0px -50% 0px'});
+  sections.forEach(s=>s&&spy.observe(s));
+
+  /* ============ constellation timeline: draws itself with scroll ============ */
+  const con=document.getElementById('constellation');
+  const threadline=document.getElementById('threadline');
+  const threadSvg=con?con.querySelector('svg.thread'):null;
+  let threadLen=0;
+  function buildThread(){
+    if(!con||!threadline)return;
+    const h=con.offsetHeight;
+    threadSvg.setAttribute('viewBox','0 0 48 '+h);
+    threadSvg.style.height=h+'px';
+    /* a gently wavering thread between the star nodes */
+    const nodes=[...con.querySelectorAll('.node')].map(n=>n.offsetTop+n.parentElement.offsetTop+14);
+    let d='M 24 '+(nodes[0]||8);
+    for(let i=1;i<nodes.length;i++){
+      const y0=nodes[i-1],y1=nodes[i],mid=(y0+y1)/2;
+      d+=' C 24 '+(y0+40)+', 12 '+(mid-30)+', 20 '+mid+' S 24 '+(y1-40)+', 24 '+y1;
+    }
+    d+=' L 24 '+h;
+    threadline.setAttribute('d',d);
+    threadLen=threadline.getTotalLength();
+    threadline.style.strokeDasharray=threadLen;
+    threadline.style.strokeDashoffset=reduceMotion?0:threadLen;
+  }
+  function drawThread(){
+    if(!con||!threadLen||reduceMotion)return;
+    const r=con.getBoundingClientRect();
+    const progress=Math.min(1,Math.max(0,(window.innerHeight*.75-r.top)/(r.height)));
+    threadline.style.strokeDashoffset=threadLen*(1-progress);
+    con.querySelectorAll('.xp').forEach(xp=>{
+      const xr=xp.getBoundingClientRect();
+      xp.classList.toggle('lit',xr.top<window.innerHeight*.72);
+    });
+  }
+  window.addEventListener('scroll',drawThread,{passive:true});
+  window.addEventListener('resize',buildThread);
+  window.addEventListener('load',()=>{buildThread();drawThread();});
+  buildThread();drawThread();
+})();
+</script>
+
+</body>
+</html>
