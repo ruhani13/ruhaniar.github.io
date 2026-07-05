@@ -1,2 +1,2 @@
 # ruhani13.github.io
-Ru's personal website
+Personal website of Ruhani Arora — AI alignment research, ML engineering. Live at https://ruhani13.github.io
